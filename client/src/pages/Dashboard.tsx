@@ -3,9 +3,11 @@ import type { Note } from '../types';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import { useNotes } from '../context/NotesContext';
 import { useNoteForm } from '../hooks/useNoteForm';
+import { useSearch } from '../hooks/useSearch'; // Add this
 import Modal from '../components/ui/Modal';
 import ConfirmModal from '../components/ui/ConfirmModal';
 import Loader from '../components/ui/Loader';
+import SearchInput from '../components/ui/SearchInput'; // Add this
 import NoteCard from '../components/notes/NoteCard';
 import NoteForm from '../components/notes/NoteForm';
 
@@ -19,6 +21,15 @@ const Dashboard = () => {
 		updateNote,
 		deleteNote,
 	} = useNotes();
+
+	// Add search hook
+	const {
+		searchQuery,
+		setSearchQuery,
+		filteredNotes,
+		clearSearch,
+		hasActiveSearch,
+	} = useSearch(notes);
 
 	const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -103,19 +114,34 @@ const Dashboard = () => {
 	return (
 		<DashboardLayout>
 			<div className='mx-auto max-w-7xl px-6 py-12'>
-				<div className='flex items-center justify-between mb-8'>
-					<div>
-						<h1 className='text-3xl font-semibold'>Your Notes</h1>
-						<p className='text-sm text-neutral-400 mt-1'>
-							{notes.length} {notes.length === 1 ? 'note' : 'notes'}
-						</p>
+				{/* Header */}
+				<div className='mb-8'>
+					<div className='flex items-center justify-between mb-6'>
+						<div>
+							<h1 className='text-3xl font-semibold'>Your Notes</h1>
+							<p className='text-sm text-neutral-400 mt-1'>
+								{hasActiveSearch
+									? `${filteredNotes.length} of ${notes.length} notes`
+									: `${notes.length} ${notes.length === 1 ? 'note' : 'notes'}`}
+							</p>
+						</div>
+						<button
+							onClick={openCreateModal}
+							className='rounded-md bg-neutral-50 px-4 py-2 text-sm font-medium text-neutral-950 hover:bg-neutral-200 transition-colors'
+						>
+							+ New Note
+						</button>
 					</div>
-					<button
-						onClick={openCreateModal}
-						className='rounded-md bg-neutral-50 px-4 py-2 text-sm font-medium text-neutral-950 hover:bg-neutral-200 transition-colors'
-					>
-						+ New Note
-					</button>
+
+					{/* Search Bar */}
+					{notes.length > 0 && (
+						<SearchInput
+							value={searchQuery}
+							onChange={setSearchQuery}
+							onClear={clearSearch}
+							placeholder='Search notes by title, content, or tags...'
+						/>
+					)}
 				</div>
 
 				{loading && <Loader />}
@@ -126,6 +152,7 @@ const Dashboard = () => {
 					</div>
 				)}
 
+				{/* Empty State */}
 				{!loading && !error && notes.length === 0 && (
 					<div className='text-center py-16'>
 						<div className='text-6xl mb-4'>📝</div>
@@ -142,9 +169,30 @@ const Dashboard = () => {
 					</div>
 				)}
 
-				{!loading && !error && notes.length > 0 && (
+				{/* No Search Results */}
+				{!loading &&
+					!error &&
+					notes.length > 0 &&
+					filteredNotes.length === 0 && (
+						<div className='text-center py-16'>
+							<div className='text-6xl mb-4'>🔍</div>
+							<h3 className='text-xl font-semibold mb-2'>No notes found</h3>
+							<p className='text-neutral-400 mb-6'>
+								No notes match "{searchQuery}"
+							</p>
+							<button
+								onClick={clearSearch}
+								className='rounded-md border border-neutral-800 px-5 py-2.5 text-sm font-medium hover:bg-neutral-900 transition-colors'
+							>
+								Clear search
+							</button>
+						</div>
+					)}
+
+				{/* Notes Grid - Use filteredNotes instead of notes */}
+				{!loading && !error && filteredNotes.length > 0 && (
 					<div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
-						{notes.map((note) => (
+						{filteredNotes.map((note) => (
 							<NoteCard
 								key={note._id}
 								note={note}
