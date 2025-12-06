@@ -69,12 +69,12 @@ const Register = () => {
 				value={password}
 				onChange={(e) => setPassword(e.target.value)}
 				required
-				minLength={6}
+				minLength={8}
 				disabled={loading}
 				placeholder='••••••••'
 			/>
 			<p className='text-xs text-neutral-500 -mt-3'>
-				Must be at least 6 characters
+				Must be at least 8 characters
 			</p>
 		</AuthForm>
 	);
