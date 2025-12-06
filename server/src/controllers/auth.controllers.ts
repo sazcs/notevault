@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import { generateToken } from '../utils/jwt.js';
+import { notifyUserRegistered } from '../services/n8n.service.js';
 
 export const register = async (req: Request, res: Response) => {
 	try {
@@ -24,6 +25,12 @@ export const register = async (req: Request, res: Response) => {
 		});
 
 		const token = generateToken(user._id.toString());
+
+		notifyUserRegistered({
+			name: user.name,
+			email: user.email,
+			registeredAt: new Date().toISOString(),
+		}).catch((err) => console.error('n8n notification failed:', err));
 
 		res.status(201).json({
 			success: true,
