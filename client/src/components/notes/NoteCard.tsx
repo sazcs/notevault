@@ -9,15 +9,15 @@ interface NoteCardProps {
 
 const NoteCard = ({ note, onEdit, onDelete }: NoteCardProps) => {
 	return (
-		<div className='rounded-lg border border-neutral-800 bg-neutral-900/30 hover:border-neutral-700 transition-colors'>
-			<Link to={`/notes/${note._id}`} className='block p-6'>
+		<div className='rounded-lg border border-neutral-800 bg-neutral-900/30 hover:border-neutral-700 transition-colors flex flex-col h-full'>
+			<Link to={`/notes/${note._id}`} className='block p-6 flex-1'>
 				<h3 className='text-lg font-semibold mb-2 truncate'>{note.title}</h3>
 				<p className='text-sm text-neutral-400 mb-4 line-clamp-3'>
 					{note.content}
 				</p>
 
 				{note.tags.length > 0 && (
-					<div className='flex flex-wrap gap-2 mb-4'>
+					<div className='flex flex-wrap gap-2'>
 						{note.tags.map((tag, index) => (
 							<span
 								key={index}
@@ -30,7 +30,7 @@ const NoteCard = ({ note, onEdit, onDelete }: NoteCardProps) => {
 				)}
 			</Link>
 
-			<div className='flex items-center justify-between px-6 pb-6 pt-0 border-t border-neutral-800/50 text-xs'>
+			<div className='flex items-center justify-between px-6 pb-6 pt-4 border-t border-neutral-800/50 text-xs mt-auto'>
 				<span className='text-neutral-500'>
 					{new Date(note.createdAt).toLocaleDateString()}
 				</span>
