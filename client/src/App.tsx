@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import NoteDetail from './pages/NoteDetail';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -18,6 +19,14 @@ function App() {
 					element={
 						<ProtectedRoute>
 							<Dashboard />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path='/notes/:id'
+					element={
+						<ProtectedRoute>
+							<NoteDetail />
 						</ProtectedRoute>
 					}
 				/>
