@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
+import authRoutes from './routes/auth.routes';
 
 dotenv.config();
 
@@ -12,6 +13,8 @@ app.use(express.json());
 app.get('/api/health', (req, res) => {
 	res.json({ success: true, message: 'NoteVault API is up and running' });
 });
+
+app.use('/api/auth', authRoutes);
 
 connectDB().then(() => {
 	app.listen(PORT, () => {
