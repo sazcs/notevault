@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
 import authRoutes from './routes/auth.routes';
+import noteRoutes from './routes/note.routes';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/notes/', noteRoutes);
 
 connectDB().then(() => {
 	app.listen(PORT, () => {
